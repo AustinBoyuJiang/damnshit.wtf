@@ -1,0 +1,13 @@
+{
+  "name": "video-player",
+  "version": "1.0.0",
+  "description": "循环播放视频的HTML项目",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["video", "player", "html", "循环播放"],
+  "author": "",
+  "license": "MIT"
+}

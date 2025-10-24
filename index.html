@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WTF Video Player</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Butcherman&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #ff0066, #ff6600, #ffcc00, #66ff00, #0066ff, #6600ff);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .chaos-text {
+            position: absolute;
+            font-family: 'Creepster', cursive;
+            color: #ff0000;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            animation: float 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        .damn {
+            top: 10%;
+            left: 5%;
+            font-size: 2.5rem;
+            animation-delay: 0s;
+        }
+
+        .shit {
+            top: 20%;
+            right: 8%;
+            font-size: 3rem;
+            animation-delay: 1s;
+            transform: rotate(-15deg);
+        }
+
+        .wtf {
+            bottom: 15%;
+            left: 10%;
+            font-size: 4rem;
+            animation-delay: 2s;
+            color: #00ff00;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        .video-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            max-width: 900px;
+            z-index: 5;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            border: 5px solid #ff0066;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(255, 0, 102, 0.8);
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 30px rgba(255, 0, 102, 0.8);
+            }
+
+            100% {
+                box-shadow: 0 0 50px rgba(255, 0, 102, 1);
+            }
+        }
+
+        .author {
+            position: fixed;
+            bottom: 10px;
+            right: 15px;
+            font-family: 'Butcherman', cursive;
+            color: #ffffff;
+            font-size: 1.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            z-index: 15;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Nosifer', cursive;
+            color: #ffffff;
+            font-size: 2rem;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.3);
+            animation: floatAround 15s linear infinite;
+        }
+
+        @keyframes floatAround {
+            0% {
+                transform: translateX(-100px) translateY(100vh) rotate(0deg);
+            }
+
+            100% {
+                transform: translateX(100vw) translateY(-100px) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chaos-text damn">DAMN!</div>
+    <div class="chaos-text shit">SHIT!</div>
+    <div class="chaos-text wtf">WTF?!</div>
+
+    <div class="floating-elements">
+        <div class="floating-element" style="animation-delay: 0s; left: 10%;">💀</div>
+        <div class="floating-element" style="animation-delay: 3s; left: 30%;">🔥</div>
+        <div class="floating-element" style="animation-delay: 6s; left: 50%;">💥</div>
+        <div class="floating-element" style="animation-delay: 9s; left: 70%;">⚡</div>
+        <div class="floating-element" style="animation-delay: 12s; left: 90%;">🤯</div>
+    </div>
+
+    <div id="loading" class="loading">Loading...</div>
+
+    <div class="video-container">
+        <video id="videoPlayer" style="display: none;" autoplay loop muted playsinline preload="auto">
+            Your browser doesn't support video playback.
+        </video>
+    </div>
+
+    <div class="author">- Austin</div>
+
+    <script>
+        const videoPlayer = document.getElementById('videoPlayer');
+        const loading = document.getElementById('loading');
+
+        // Enable audio after user interaction
+        function enableAudio() {
+            videoPlayer.muted = false;
+            videoPlayer.volume = 1.0;
+            document.removeEventListener('click', enableAudio);
+            document.removeEventListener('keydown', enableAudio);
+            document.removeEventListener('touchstart', enableAudio);
+        }
+
+        // Add event listeners for user interaction
+        document.addEventListener('click', enableAudio);
+        document.addEventListener('keydown', enableAudio);
+        document.addEventListener('touchstart', enableAudio);
+
+        // Load and play the single video
+        function loadVideo() {
+            console.log('Loading video...');
+
+            // Set video source
+            videoPlayer.src = 'public/files/video.mp4';
+
+            // Force load the video
+            videoPlayer.load();
+
+            // Handle successful loading
+            videoPlayer.addEventListener('canplay', function () {
+                console.log('Video can play');
+                loading.style.display = 'none';
+                videoPlayer.style.display = 'block';
+
+                // Start playing
+                playVideo();
+            }, { once: true });
+
+            // Handle loading errors
+            videoPlayer.addEventListener('error', function (e) {
+                console.error('Video error:', e);
+                loading.textContent = 'WTF! Video failed to load!';
+                loading.style.color = '#ff0000';
+            });
+
+            // Handle loading timeout
+            setTimeout(() => {
+                if (videoPlayer.style.display === 'none') {
+                    loading.textContent = 'Still loading... WTF?';
+                }
+            }, 5000);
+        }
+
+        // Play video function
+        function playVideo() {
+            videoPlayer.play().then(() => {
+                console.log('Video playing successfully');
+                // Enable sound after a short delay
+                setTimeout(() => {
+                    if (!videoPlayer.muted) return; // Already unmuted by user interaction
+                    videoPlayer.muted = false;
+                    videoPlayer.volume = 0.8;
+                }, 500);
+            }).catch(error => {
+                console.log('Autoplay blocked, waiting for user interaction:', error);
+                // Show a click hint
+                loading.textContent = 'Click anywhere to start!';
+                loading.style.display = 'block';
+
+                // Enable click to play
+                document.addEventListener('click', function startOnClick() {
+                    videoPlayer.play();
+                    loading.style.display = 'none';
+                    document.removeEventListener('click', startOnClick);
+                }, { once: true });
+            });
+        }
+
+        // Start loading when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadVideo);
+        } else {
+            loadVideo();
+        }
+
+        // Add some random chaos effects
+        setInterval(() => {
+            const chaosElements = document.querySelectorAll('.chaos-text');
+            chaosElements.forEach(el => {
+                el.style.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            });
+        }, 2000);
+    </script>
+</body>
+
+</html>
