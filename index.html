@@ -185,7 +185,7 @@
     <div id="loading" class="loading">Loading...</div>
 
     <div class="video-container">
-        <video id="videoPlayer" style="display: none;" autoplay loop muted playsinline preload="metadata">
+        <video id="videoPlayer" style="display: none;" autoplay muted playsinline preload="metadata">
             Your browser doesn't support video playback.
         </video>
     </div>
@@ -196,12 +196,29 @@
         const videoPlayer = document.getElementById('videoPlayer');
         const loading = document.getElementById('loading');
 
-        // Optimized video loading
-        function initVideo() {
-            console.log('Loading video...');
+        // Video playlist
+        const videoList = [
+            'https://drive.austinjiang.com/f/J7Sz/damnshit.mp4',
+            'https://drive.austinjiang.com/f/n2Fk/damnfuck.mp4'
+        ];
 
-            // Set video source
-            videoPlayer.src = 'https://drive.austinjiang.com/f/J7Sz/damnshit.mp4';
+        let currentVideoIndex = 0;
+        let soundEnabled = false;
+
+        // Random video selection
+        function getRandomVideo() {
+            const randomIndex = Math.floor(Math.random() * videoList.length);
+            currentVideoIndex = randomIndex;
+            return videoList[randomIndex];
+        }
+
+        // Load random video
+        function initVideo() {
+            const randomVideoUrl = getRandomVideo();
+            console.log('Loading random video:', randomVideoUrl);
+
+            // Set random video source
+            videoPlayer.src = randomVideoUrl;
 
             // Wait for video to be ready
             videoPlayer.addEventListener('loadedmetadata', function () {
@@ -223,7 +240,9 @@
                 playPromise.then(() => {
                     console.log('Video playing');
                     // Enable sound after user clicks
-                    document.addEventListener('click', enableSound, { once: true });
+                    if (!soundEnabled) {
+                        document.addEventListener('click', enableSound, { once: true });
+                    }
                 }).catch(error => {
                     console.log('Need user interaction to play');
                     showClickPrompt();
@@ -234,6 +253,7 @@
         function enableSound() {
             videoPlayer.muted = false;
             videoPlayer.volume = 0.8;
+            soundEnabled = true;
             console.log('Sound enabled');
         }
 
@@ -246,9 +266,25 @@
                 videoPlayer.play();
                 videoPlayer.muted = false;
                 videoPlayer.volume = 0.8;
+                soundEnabled = true;
                 loading.style.display = 'none';
             }, { once: true });
         }
+
+        // When video ends, play another random video
+        videoPlayer.addEventListener('ended', function () {
+            console.log('Video ended, loading next random video');
+            const nextRandomVideo = getRandomVideo();
+            videoPlayer.src = nextRandomVideo;
+
+            // Keep sound enabled if it was already enabled
+            if (soundEnabled) {
+                videoPlayer.muted = false;
+                videoPlayer.volume = 0.8;
+            }
+
+            videoPlayer.play();
+        });
 
         // Handle errors
         videoPlayer.addEventListener('error', function (e) {
